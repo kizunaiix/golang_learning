@@ -1,4 +1,4 @@
-package main
+package mymath
 
 func Add(x, y int) int {
 	return x + y
