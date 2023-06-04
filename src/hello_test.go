@@ -24,7 +24,7 @@ func Test2(t *testing.T) {
 	// aa = 55 error
 	a, b, c := 5, 7, 4
 	print(a + b)
-	fmt.Printf("a+b-c-d-f=%d,aa=%d, + %s"+" leiho\n", (a + b - c - d - f), aa, "haha\n")
+	fmt.Printf("a+b-c-d-f=%d,aa=%d, + %s"+" leiho", (a + b - c - d - f), aa, "haha\n")
 }
 
 func Test3(t *testing.T) {
