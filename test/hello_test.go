@@ -41,3 +41,13 @@ func Test3(t *testing.T) {
 	)
 	fmt.Println(a, b, c, d, e, f, g, h, i)
 }
+
+func helloer() {
+	fmt.Println("hello!")
+}
+
+// 函数作为变量
+func Test4(t *testing.T) {
+	s := helloer
+	s()
+}
