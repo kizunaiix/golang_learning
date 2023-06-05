@@ -1,8 +1,8 @@
-package main
+package test
 
 import (
 	"fmt"
-	"golang_learning/mymath"
+	"golang_learning/pkg/mymath"
 	"testing"
 )
 
