@@ -12,7 +12,7 @@ var f = 10
 // 试一下import与直接print
 func Test1(t *testing.T) {
 	s := 3
-	println(s)
+	fmt.Printf("s:  %v", s)
 	print(mymath.Add(3, 4))
 }
 
