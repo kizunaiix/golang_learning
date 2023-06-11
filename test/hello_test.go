@@ -51,3 +51,22 @@ func Test4(t *testing.T) {
 	s := helloer
 	s()
 }
+
+func Test5(t *testing.T) {
+	list1 := [3]string{"helo"}
+	list1[1] = "3"
+	fmt.Printf("%v \n", list1)
+	fmt.Println(list1)
+	fmt.Println("------------")
+	var aa int32 = '算'
+	fmt.Println(string(aa)) // 注意这里的string()方法
+	fmt.Printf("aa : %v\n", aa)
+	fmt.Println("------------")
+	s := "Go语言编程"
+	//  转成 rune 数组，需要几个字符，取几个字符
+	fmt.Println([]rune(s)[:4]) // 输出：Go语言 -> 不正确是因为我没使用string()方法
+
+}
+func Test6(t *testing.T) {
+
+}

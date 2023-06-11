@@ -9,4 +9,6 @@ func main() {
 	fmt.Println("hello world")
 	s := mymath.Add(3, 4)
 	fmt.Printf("s = %v", s)
+	fmt.Println("Press Enter to exit...")
+	fmt.Scanln()
 }
