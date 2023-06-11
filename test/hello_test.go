@@ -57,6 +57,9 @@ func Test5(t *testing.T) {
 	list1[1] = "3"
 	fmt.Printf("%v \n", list1)
 	fmt.Println(list1)
+	for k, v := range list1 {
+		fmt.Print(k, v+"\n")
+	}
 	fmt.Println("------------")
 	var aa int32 = '算'
 	fmt.Println(string(aa)) // 注意这里的string()方法
@@ -67,6 +70,19 @@ func Test5(t *testing.T) {
 	fmt.Println([]rune(s)[:4]) // 输出：Go语言 -> 不正确是因为我没使用string()方法
 
 }
-func Test6(t *testing.T) {
 
+// 数组切片和字符串切片的不同
+func Test6(t *testing.T) {
+	a := [3]int{1, 2, 3}
+	b := "abc"
+	slice_a := a[:2]
+	slice_b := b[:2]
+	slice_aa := slice_a[:1] //切片也能切
+
+	a[1] = 4  //分别改动原数组或字符串
+	b = "def" //分别改动原数组或字符串
+
+	fmt.Println(slice_a) //数组的切片也会变
+	fmt.Println(slice_b) //字符串的切片不受影响
+	fmt.Printf("a=%v,b=%v,slice_aa=%v\n", a, b, slice_aa)
 }
