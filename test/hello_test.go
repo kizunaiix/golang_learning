@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"golang_learning/pkg/mymath"
+	"math/rand"
 	"testing"
 )
 
@@ -85,4 +86,30 @@ func Test6(t *testing.T) {
 	fmt.Println(slice_a) //数组的切片也会变
 	fmt.Println(slice_b) //字符串的切片不受影响
 	fmt.Printf("a=%v,b=%v,slice_aa=%v\n", a, b, slice_aa)
+}
+
+func Test7(t *testing.T) {
+	type Student struct {
+		Age int
+	}
+
+	kvmap := map[string]Student{"menglu": {Age: 21}}
+	kvmap["menglu"] = Student{Age: 22}
+	s := []Student{{Age: 21}}
+	s[0].Age = 22
+	fmt.Println(kvmap, s)
+}
+
+func Test8(t *testing.T) {
+	type Student struct {
+		Age int
+	}
+
+	kvslice := []Student{{Age: 21}}
+	fmt.Println(kvslice[0].Age)
+}
+
+func Test(t *testing.T) {
+	a := rand.Intn(-1)
+	fmt.Println(a)
 }
