@@ -20,5 +20,5 @@ func intAdd7(a int, b int) int {
 	var c int = 7
 	var gg float64 = 2.3
 	f := func(o int) int { return o }
-	return f(c) + b + int(gg)
+	return f(c) + a + b + int(gg)
 }
