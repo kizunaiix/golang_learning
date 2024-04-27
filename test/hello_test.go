@@ -109,7 +109,30 @@ func Test8(t *testing.T) {
 	fmt.Println(kvslice[0].Age)
 }
 
-func Test(t *testing.T) {
+func Test9(t *testing.T) {
 	a := rand.Intn(-1)
 	fmt.Println(a)
+}
+
+// switch case语句
+func Test10(t *testing.T) {
+	a := 10
+	switch {
+	case a == 10:
+		println("a is 10")
+	case a == 9:
+		println("a is 9")
+	}
+}
+
+// 一个for循环
+func Test11(t *testing.T) {
+	v := []int{1, 2, 3}
+	for k, v := range v {
+		println("k:", k, "v:", v)
+	}
+	println("------------------")
+	for i := 0; i < 3; i += 3 {
+		println("ok")
+	}
 }
