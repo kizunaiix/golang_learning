@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"golang_learning/pkg/mymath"
+	"golang_learning/pkg/objs"
 	"math/rand"
 	"testing"
 )
@@ -135,4 +136,19 @@ func Test11(t *testing.T) {
 	for i := 0; i < 3; i += 3 {
 		println("ok")
 	}
+}
+
+// 写一个Student的Option模式
+func Test12(t *testing.T) {
+	stu1 := objs.NewStudent(
+		objs.WithStudentAge(23),
+		objs.WithStudentId(1145141919810),
+		objs.WithStudentName("李天梭"),
+	)
+
+	fmt.Printf("学生是：%v", *stu1)
+	fmt.Printf("\n其姓名为： %v", stu1.Name)
+	fmt.Printf("\n其年龄为： %v + 1 = %v", stu1.Age, stu1.Age+1)
+	fmt.Printf("\n其学号为： %v", stu1.Id)
+
 }

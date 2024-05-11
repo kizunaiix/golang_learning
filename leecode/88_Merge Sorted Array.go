@@ -1,6 +1,6 @@
-package main
+package leecode
 
-func merge(nums1 []int, m int, nums2 []int, n int) {
+func Merge(nums1 []int, m int, nums2 []int, n int) {
 	sorted := make([]int, 0, m+n)
 	p1, p2 := 0, 0
 	for {

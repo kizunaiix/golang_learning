@@ -1,6 +1,6 @@
-package main
+package leecode
 
-func removeElement(nums []int, val int) int {
+func RemoveElement(nums []int, val int) int {
 	newslice := []int{}
 	for _, v := range nums {
 		if v != val {
