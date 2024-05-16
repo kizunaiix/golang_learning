@@ -1,0 +1,11 @@
+server:
+  shenmedngxi?: "shashahsa"
+  host: "localhost"
+  hahaha: 
+    xyz: "???"
+  port: 8080
+database:
+  zangshuju: "zangzangzang"
+  user: "admin"
+  password: "secret"
+  dbname: "myapp"

@@ -1,34 +1,40 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
 
-// Barkable 接口
-// type Barkable interface {
-// 	(any) bark()
-// }
+	"gopkg.in/yaml.v3"
+)
 
-type Animal struct {
-	Dog
-	Duck
+// 定义与 YAML 文件对应的结构体
+type Config struct {
+	Server struct {
+		Host string `yaml:"host"`
+		Port int64  `yaml:"port"`
+	} `yaml:"server"`
+	Database struct {
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Dbname   string `yaml:"dbname"`
+	} `yaml:"database"`
 }
-
-// Dog 结构体
-type Dog struct{}
-
-// Duck 结构体
-type Duck struct{}
-
-// Dog 实现 Barkable 接口的 bark 方法
-func (d Dog) bark() {
-	fmt.Println("wang!")
-}
-
-// Duck 实现 Barkable 接口的 bark 方法
-// func (d Animal) bark() {
-// 	fmt.Println("gua!")
-// }
 
 func main() {
-	b1 := Animal{}
-	b1.bark() // 输出: wang!
+	// 读取 YAML 文件
+	data, err := os.ReadFile("t.yml")
+	if err != nil {
+		log.Fatalf("Error reading YAML file: %v", err)
+	}
+
+	// 将 YAML 内容解析为结构体
+	var config Config
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("Error parsing YAML: %v", err)
+	}
+
+	// 输出解析结果
+	fmt.Printf("Parsed YAML file into struct:\n%+v\n", config)
 }
