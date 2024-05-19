@@ -150,5 +150,31 @@ func Test12(t *testing.T) {
 	fmt.Printf("\n其姓名为： %v", stu1.Name)
 	fmt.Printf("\n其年龄为： %v + 1 = %v", stu1.Age, stu1.Age+1)
 	fmt.Printf("\n其学号为： %v", stu1.Id)
+}
 
+// 看一下map是不是指针
+func Test13(t *testing.T) {
+	aMap := make(map[string]any)
+	aMap["age"] = 3
+	aMap["name"] = "xiaoming"
+	aMap["price"] = 135
+	aMap["color"] = "black"
+	aMap["color"] = "white"
+	bMap := aMap
+	bMap["age"] = 8848
+	fmt.Println(aMap)
+	fmt.Println(bMap)
+}
+
+func ModSlice(s *[]string) {
+	*s = (*s)[0:2]
+}
+
+// 研究一下slice的指针
+func Test14(t *testing.T) {
+
+	a := []string{"aa", "bb", "cc", "dd"}
+	// a = a[0:2]
+	ModSlice(&a)
+	fmt.Println(a)
 }
