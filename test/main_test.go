@@ -187,6 +187,9 @@ func Test14(t *testing.T) {
 func Test15(t *testing.T) {
 	var a objs.Animal
 	objs.IsAnimal(a)
+
+	// 用defer把这个panic给recover了, defer后面不是直接写执行语句而是用了匿名函数，这与defer的机制有关：
+	// defer后直接写语句，其实会当时就执行这些语句，只是defer之后再显示结果。而defer后用匿名函数就可以保证这些语句一定会等到函数退出前才执行。
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic:", r)
