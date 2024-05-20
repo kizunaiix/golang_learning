@@ -178,3 +178,19 @@ func Test14(t *testing.T) {
 	ModSlice(&a)
 	fmt.Println(a)
 }
+
+/*
+试一下接口的方法具体会怎么实现，是当成猫还是狗
+
+	答案是会直接panic
+*/
+func Test15(t *testing.T) {
+	var a objs.Animal
+	objs.IsAnimal(a)
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	a.Bark()
+}
