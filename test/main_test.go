@@ -5,6 +5,7 @@ import (
 	"golang_learning/pkg/mymath"
 	"golang_learning/pkg/objs"
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -196,4 +197,39 @@ func Test15(t *testing.T) {
 		}
 	}()
 	a.Bark()
+}
+
+// slice 可以是空，也可以是nil，它们不太一样。
+// map 同理。
+func Test16(t *testing.T) {
+	var nulls = []int32{}
+	var nils []int32
+	var mymap map[int32]int32
+
+	if len(nulls) == len(nils) && len(mymap) == 0 {
+		fmt.Println("空slice和nil slice的长度都是0 , nil的map其长度也是0")
+	} else {
+		fmt.Println("难道不是吗？")
+	}
+}
+
+// 对值为nil的map添加键值对，会引发panic
+func Test17(t *testing.T) {
+	var NilMap map[string]string
+	defer func() {
+		if msg := recover(); msg != nil {
+			fmt.Println(msg)
+		}
+	}()
+	NilMap["aa"] = "bb"
+}
+
+func Test18(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r, " 其类型为： ", reflect.TypeOf(r))
+		}
+	}()
+
+	panic([]int{1, 2, 34}) // 抛出一个某种类型的异常
 }
