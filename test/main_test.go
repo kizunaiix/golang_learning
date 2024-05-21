@@ -233,3 +233,19 @@ func Test18(t *testing.T) {
 
 	panic([]int{1, 2, 34}) // 抛出一个某种类型的异常
 }
+
+type Fanxing interface {
+	~int | string
+}
+
+func UseFanxing[T Fanxing](a T) {
+	fmt.Println(a)
+}
+
+// 泛型
+func Test19(t *testing.T) {
+	// UseFanxing(true)    -> 这句会报错，因为泛型里没bool
+	UseFanxing(42)
+	UseFanxing("ok")
+
+}
