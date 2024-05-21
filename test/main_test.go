@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
+	"time"
 )
 
 var d int = 9
@@ -247,5 +248,36 @@ func Test19(t *testing.T) {
 	// UseFanxing(true)    -> 这句会报错，因为泛型里没bool
 	UseFanxing(42)
 	UseFanxing("ok")
+}
 
+// 通道,不使用goroutine
+func Test20(t *testing.T) {
+	var c = make(chan int, 1) //这里必须容量大于等于2，否则死锁，第255行就无法执行了
+	c <- 98
+	// c <- 87
+	a := <-c
+	fmt.Println(a)
+}
+
+// 通道，使用goroutine
+//
+// 主goroutine不可以永久阻塞（会死锁）。别的goroutine可以阻塞，反正最后主函数执行完了会全退出。
+func Test21(t *testing.T) {
+	var c = make(chan int)
+
+	// 启动一个goroutine来接收数据
+	go func() {
+
+		c <- 98
+		c <- 87
+	}()
+
+	time.Sleep(3 * time.Second)
+
+	a := <-c
+	fmt.Println(a)
+	time.Sleep(time.Second)
+	// 读取第二个值
+	b := <-c
+	fmt.Println(b)
 }
