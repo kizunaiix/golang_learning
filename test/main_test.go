@@ -5,6 +5,7 @@ import (
 	"golang_learning/pkg/mymath"
 	"golang_learning/pkg/objs"
 	"math/rand"
+	"sync"
 	"testing"
 )
 
@@ -179,11 +180,9 @@ func Test14(t *testing.T) {
 	fmt.Println(a)
 }
 
-/*
-试一下接口的方法具体会怎么实现，是当成猫还是狗
-
-	答案是会直接panic
-*/
+// 试一下接口的方法具体会怎么实现，是当成猫还是狗
+//
+//	答案是会直接panic
 func Test15(t *testing.T) {
 	var a objs.Animal
 	objs.IsAnimal(a)
@@ -196,4 +195,85 @@ func Test15(t *testing.T) {
 		}
 	}()
 	a.Bark()
+}
+
+// 定义一个worker函数，从jobs通道接收任务，将结果发送到results通道
+func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for job := range jobs {
+		fmt.Printf("Worker %d started job %d\n", id, job)
+		// 处理任务（此处为简单乘法操作）
+		result := job * 2
+		fmt.Printf("Worker %d finished job %d\n", id, job)
+		results <- result
+	}
+}
+
+// 理解channel
+func Test16(t *testing.T) {
+	const numJobs = 5
+	const numWorkers = 3
+
+	jobs := make(chan int, numJobs)
+	results := make(chan int, numJobs)
+	var wg sync.WaitGroup
+
+	// 启动多个worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
+
+	// 向jobs通道发送任务
+	for j := 1; j <= numJobs; j++ {
+		jobs <- j
+	}
+	close(jobs) // 所有任务发送完毕后关闭通道
+
+	// 等待所有worker完成任务
+	wg.Wait()
+	close(results)
+
+	// 从results通道接收并打印结果
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
+}
+
+// 改用无缓冲通道试试
+func Test17(t *testing.T) {
+	const numJobs = 5
+	const numWorkers = 3
+
+	jobs := make(chan int)    // 无缓冲通道
+	results := make(chan int) // 无缓冲通道
+	var wg sync.WaitGroup
+
+	// 启动worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
+
+	// 向jobs通道发送任务
+	go func() {
+		for j := 1; j <= numJobs; j++ {
+			jobs <- j
+		}
+		close(jobs)
+	}()
+
+	// 等待所有worker完成任务
+	// 这里不这样写的话，直接在主goroutine里wg.Wait()就会死锁了。
+	// 一定能等到该goroutine执行完，这是因为主goroutine上的for range会阻塞，
+	// 直到results这个通道被关闭。
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// 从results通道接收并打印结果
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
 }
