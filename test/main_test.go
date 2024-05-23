@@ -5,7 +5,9 @@ import (
 	"golang_learning/pkg/mymath"
 	"golang_learning/pkg/objs"
 	"math/rand"
+	"sync"
 	"testing"
+	"time"
 )
 
 var d int = 9
@@ -194,4 +196,84 @@ func Test15(t *testing.T) {
 		}
 	}()
 	a.Bark()
+}
+
+// Worker函数，负责从任务通道接收任务并处理
+func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for job := range jobs {
+		fmt.Printf("Worker %d started job %d\n", id, job)
+		time.Sleep(time.Second) // 模拟工作耗时
+		fmt.Printf("Worker %d finished job %d\n", id, job)
+		results <- job * 2 // 处理结果
+	}
+}
+
+// 学习goroutine ，这里用的通道有缓冲。
+func Test16(t *testing.T) {
+	const numJobs = 5
+	const numWorkers = 3
+
+	jobs := make(chan int, numJobs)
+	results := make(chan int, numJobs)
+	var wg sync.WaitGroup
+
+	// 启动worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
+
+	// 发送任务到任务通道
+	for j := 1; j <= numJobs; j++ {
+		jobs <- j
+	}
+	close(jobs) // 所有任务发送完毕后关闭通道
+
+	// 等待所有worker完成
+	wg.Wait()
+	close(results)
+
+	// 收集处理结果
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
+}
+
+// 试一下0缓冲的通道
+func Test17(t *testing.T) {
+	const numJobs = 5
+	const numWorkers = 3
+
+	jobs := make(chan int)    // 无缓冲通道
+	results := make(chan int) // 无缓冲通道
+	var wg sync.WaitGroup
+
+	// 启动worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
+
+	// 向jobs通道发送任务
+	go func() {
+		for j := 1; j <= numJobs; j++ {
+			jobs <- j
+		}
+		close(jobs)
+	}()
+
+	// 等待所有worker完成任务
+	// 这里要用一个goroutine来执行wg.Wait()，这是因为主goroutine上一直堵着for range
+	// 因为主goroutine堵住了，所以要让一个新的goroutine来执行wg.Wait()；close(results)
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// 从results通道接收并打印结果，
+	// 这里的for range对通道作用的效果是，会一直阻塞，直到通道关闭。
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
 }
