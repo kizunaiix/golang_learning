@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"golang_learning/pkg/mymath"
 	"golang_learning/pkg/objs"
+	"log"
 	"math/rand"
+	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 var d int = 9
@@ -276,4 +280,50 @@ func Test17(t *testing.T) {
 	for result := range results {
 		fmt.Printf("Result: %d\n", result)
 	}
+}
+
+// YAML文件读取和unmarshal
+func Test18(t *testing.T) {
+	// 读取 YAML 文件
+	data, err := os.ReadFile("t.yml")
+	if err != nil {
+		log.Fatalf("Error reading YAML file: %v", err)
+	}
+
+	// 将 YAML 内容解析为结构体
+	var config objs.Config
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("Error parsing YAML: %v", err)
+	}
+
+	// 输出解析结果
+	fmt.Printf("Parsed YAML file into struct:\n%+v\n", config)
+}
+
+type people struct{}
+type weirdPeople struct{}
+
+func (weirdPeople) weird() {
+	fmt.Println("werid")
+}
+
+type weirdInterface interface {
+	weird()
+}
+type killer interface {
+	// int | string
+	kill(people)
+}
+
+func (people) kill(p people) {
+	fmt.Println("killed: ", p)
+}
+
+// 试试interface什么时候必须写作泛型
+func Test19(t *testing.T) {
+	var m people
+	// var n killer
+	m.kill(m)
+
 }
