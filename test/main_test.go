@@ -301,29 +301,21 @@ func Test18(t *testing.T) {
 	fmt.Printf("Parsed YAML file into struct:\n%+v\n", config)
 }
 
-type people struct{}
-type weirdPeople struct{}
+type weirdPeople[T killer] struct{} // 注意泛型的写法， 定义类型的时候就得写上泛型了
 
-func (weirdPeople) weird() {
-	fmt.Println("werid")
+func (weirdPeople[T]) weird(t T) { // 注意泛型的写法， 绑定方法的时候直接使用泛型
+	fmt.Println("werid: ", t)
 }
 
-type weirdInterface interface {
-	weird()
-}
 type killer interface {
-	// int | string
-	kill(people)
-}
-
-func (people) kill(p people) {
-	fmt.Println("killed: ", p)
+	int | string
+	// kill()        ----> 这里不能写kill方法  ，因为写kill的话，int和string就必须得会kill。 当然如果不是int和string而是people这种类型的话那没问题。
 }
 
 // 试试interface什么时候必须写作泛型
 func Test19(t *testing.T) {
-	var m people
-	// var n killer
-	m.kill(m)
+	var m int = 3
+	var n weirdPeople[int] //  声明变量的时候必须实例化泛型
+	n.weird(m)             // m作为int符合weird()的要求。
 
 }
