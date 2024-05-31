@@ -1,0 +1,7 @@
+{
+    "rawString": {
+        "s": "hello world."
+    },
+    "rawString2": "a: This is a long paragraph      that spans multiple lines     in YAML but will be folded   into a single line when parsed.\n",
+    "rawString3": "a: This is a poem\nWith multiple lines\nEach preserved\nAs they were written"
+}

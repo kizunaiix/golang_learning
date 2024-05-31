@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang_learning/pkg/mymath"
 	"golang_learning/pkg/objs"
+	"log"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -280,4 +281,12 @@ func Test21(t *testing.T) {
 	// 读取第二个值
 	b := <-c
 	fmt.Println(b)
+}
+
+// 把yaml文件转换json文件
+func Test22(t *testing.T) {
+	err := objs.YamlToJson("../cmd/tt.yml", "../cmd/tt.json")
+	if err != nil {
+		log.Println(err)
+	}
 }

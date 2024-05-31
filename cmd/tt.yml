@@ -1,0 +1,13 @@
+rawString:
+  s: hello
+    world.
+rawString2: > # 会被折成一句话
+  a: This is a long paragraph     
+  that spans multiple lines    
+  in YAML but will be folded  
+  into a single line when parsed.
+rawString3: | # 原生态
+  a: This is a poem
+  With multiple lines
+  Each preserved
+  As they were written
