@@ -6,9 +6,12 @@ import (
 	"golang_learning/pkg/objs"
 	"log"
 	"math/rand"
-	"reflect"
+	"os"
+	"sync"
 	"testing"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 var d int = 9
@@ -182,11 +185,9 @@ func Test14(t *testing.T) {
 	fmt.Println(a)
 }
 
-/*
-试一下接口的方法具体会怎么实现，是当成猫还是狗
-
-	答案是会直接panic
-*/
+// 试一下接口的方法具体会怎么实现，是当成猫还是狗
+//
+//	答案是会直接panic
 func Test15(t *testing.T) {
 	var a objs.Animal
 	objs.IsAnimal(a)
@@ -201,86 +202,122 @@ func Test15(t *testing.T) {
 	a.Bark()
 }
 
-// slice 可以是空，也可以是nil，它们不太一样。
-// map 同理。
-func Test16(t *testing.T) {
-	var nulls = []int32{}
-	var nils []int32
-	var mymap map[int32]int32
-
-	if len(nulls) == len(nils) && len(mymap) == 0 {
-		fmt.Println("空slice和nil slice的长度都是0 , nil的map其长度也是0")
-	} else {
-		fmt.Println("难道不是吗？")
+// Worker函数，负责从任务通道接收任务并处理
+func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for job := range jobs {
+		fmt.Printf("Worker %d started job %d\n", id, job)
+		time.Sleep(time.Second) // 模拟工作耗时
+		fmt.Printf("Worker %d finished job %d\n", id, job)
+		results <- job * 2 // 处理结果
 	}
 }
 
-// 对值为nil的map添加键值对，会引发panic
+// 学习goroutine ，这里用的通道有缓冲。
+func Test16(t *testing.T) {
+	const numJobs = 5
+	const numWorkers = 3
+
+	jobs := make(chan int, numJobs)
+	results := make(chan int, numJobs)
+	var wg sync.WaitGroup
+
+	// 启动worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
+
+	// 发送任务到任务通道
+	for j := 1; j <= numJobs; j++ {
+		jobs <- j
+	}
+	close(jobs) // 所有任务发送完毕后关闭通道
+
+	// 等待所有worker完成
+	wg.Wait()
+	close(results)
+
+	// 收集处理结果
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
+}
+
+// 试一下0缓冲的通道
 func Test17(t *testing.T) {
-	var NilMap map[string]string
-	defer func() {
-		if msg := recover(); msg != nil {
-			fmt.Println(msg)
-		}
-	}()
-	NilMap["aa"] = "bb"
-}
+	const numJobs = 5
+	const numWorkers = 3
 
-func Test18(t *testing.T) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("Recovered from panic:", r, " 其类型为： ", reflect.TypeOf(r))
-		}
-	}()
+	jobs := make(chan int)    // 无缓冲通道
+	results := make(chan int) // 无缓冲通道
+	var wg sync.WaitGroup
 
-	panic([]int{1, 2, 34}) // 抛出一个某种类型的异常
-}
+	// 启动worker goroutine
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go worker(w, jobs, results, &wg)
+	}
 
-type Fanxing interface {
-	~int | string
-}
-
-func UseFanxing[T Fanxing](a T) {
-	fmt.Println(a)
-}
-
-// 泛型
-func Test19(t *testing.T) {
-	// UseFanxing(true)    -> 这句会报错，因为泛型里没bool
-	UseFanxing(42)
-	UseFanxing("ok")
-}
-
-// 通道,不使用goroutine
-func Test20(t *testing.T) {
-	var c = make(chan int, 1) //这里必须容量大于等于2，否则死锁，第255行就无法执行了
-	c <- 98
-	// c <- 87
-	a := <-c
-	fmt.Println(a)
-}
-
-// 通道，使用goroutine
-//
-// 主goroutine不可以永久阻塞（会死锁）。别的goroutine可以阻塞，反正最后主函数执行完了会全退出。
-func Test21(t *testing.T) {
-	var c = make(chan int)
-
-	// 启动一个goroutine来接收数据
+	// 向jobs通道发送任务
 	go func() {
-
-		c <- 98
-		c <- 87
+		for j := 1; j <= numJobs; j++ {
+			jobs <- j
+		}
+		close(jobs)
 	}()
 
-	time.Sleep(3 * time.Second)
+	// 等待所有worker完成任务
+	// 这里要用一个goroutine来执行wg.Wait()，这是因为主goroutine上一直堵着for range
+	// 因为主goroutine堵住了，所以要让一个新的goroutine来执行wg.Wait()；close(results)
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 
-	a := <-c
-	fmt.Println(a)
-	time.Sleep(time.Second)
-	// 读取第二个值
-	b := <-c
-	fmt.Println(b)
+	// 从results通道接收并打印结果，
+	// 这里的for range对通道作用的效果是，会一直阻塞，直到通道关闭。
+	for result := range results {
+		fmt.Printf("Result: %d\n", result)
+	}
+}
+
+// YAML文件读取和unmarshal
+func Test18(t *testing.T) {
+	// 读取 YAML 文件
+	data, err := os.ReadFile("t.yml")
+	if err != nil {
+		log.Fatalf("Error reading YAML file: %v", err)
+	}
+
+	// 将 YAML 内容解析为结构体
+	var config objs.Config
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("Error parsing YAML: %v", err)
+	}
+
+	// 输出解析结果
+	fmt.Printf("Parsed YAML file into struct:\n%+v\n", config)
+}
+
+type weirdPeople[T killer] struct{} // 注意泛型的写法， 定义类型的时候就得写上泛型了
+
+func (weirdPeople[T]) weird(t T) { // 注意泛型的写法， 绑定方法的时候直接使用泛型
+	fmt.Println("werid: ", t)
+}
+
+type killer interface {
+	int | string
+	// kill()        ----> 这里不能写kill方法  ，因为写kill的话，int和string就必须得会kill。 当然如果不是int和string而是people这种类型的话那没问题。
+}
+
+// 试试interface什么时候必须写作泛型
+func Test19(t *testing.T) {
+	var m int = 3
+	var n weirdPeople[int] //  声明变量的时候必须实例化泛型
+	n.weird(m)             // m作为int符合weird()的要求。
+
 }
 
 // 把yaml文件转换json文件
