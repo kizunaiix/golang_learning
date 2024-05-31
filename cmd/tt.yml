@@ -11,3 +11,15 @@ rawString3: | # 原生态
   With multiple lines
   Each preserved
   As they were written
+
+defaults: &defaults
+  adapter: postgres
+  host: localhost
+
+development:
+  database: myapp_development
+  go: *defaults # 注意区别
+
+test:
+  database: myapp_test
+  <<: *defaults # 注意区别

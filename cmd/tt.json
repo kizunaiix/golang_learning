@@ -1,7 +1,23 @@
 {
+    "defaults": {
+        "adapter": "postgres",
+        "host": "localhost"
+    },
+    "development": {
+        "database": "myapp_development",
+        "go": {
+            "adapter": "postgres",
+            "host": "localhost"
+        }
+    },
     "rawString": {
         "s": "hello world."
     },
     "rawString2": "a: This is a long paragraph      that spans multiple lines     in YAML but will be folded   into a single line when parsed.\n",
-    "rawString3": "a: This is a poem\nWith multiple lines\nEach preserved\nAs they were written"
+    "rawString3": "a: This is a poem\nWith multiple lines\nEach preserved\nAs they were written\n",
+    "test": {
+        "adapter": "postgres",
+        "database": "myapp_test",
+        "host": "localhost"
+    }
 }
