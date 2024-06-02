@@ -3,7 +3,6 @@ package objs
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -27,12 +26,12 @@ func YamlToJson(srcFile, desFile string) error {
 	defer func() error {
 		err = f.Close()
 		if err != nil {
-			return err
+			return fmt.Errorf("ERROR in close file: %v", err)
 		}
 		return nil
 	}()
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR in open file: %v", err)
 	}
 
 	content := make([]byte, 102400)
@@ -40,7 +39,7 @@ func YamlToJson(srcFile, desFile string) error {
 
 	n, err := f.Read(content)
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR in read content: %v", err)
 	} else {
 		content = content[:n]
 	}
@@ -51,30 +50,30 @@ func YamlToJson(srcFile, desFile string) error {
 			flag = true
 		}
 		if flag {
-			log.Println("YML文件包含无效的控制字符")
+			return fmt.Errorf("YML文件包含无效的控制字符")
 		}
 	}
 
 	err = yaml.Unmarshal(content, contentInGo)
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR in unmarshalling yaml: %v", err)
 	}
 
-	fmt.Println(string(content))
-	fmt.Println("====================================================")
-	fmt.Println(contentInGo)
+	// fmt.Println(string(content))
+	// fmt.Println("====================================================")
+	// fmt.Println(contentInGo)
 
 	contentInJson, err := json.Marshal(contentInGo)
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR when marshalling to JSON: %v", err)
 	}
 
-	fmt.Println("======================================================")
-	fmt.Println(string(contentInJson))
+	// fmt.Println("======================================================")
+	// fmt.Println(string(contentInJson))
 
 	err = os.WriteFile(desFile, contentInJson, 0777)
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR in writting files: %v", err)
 	}
 	return nil
 }

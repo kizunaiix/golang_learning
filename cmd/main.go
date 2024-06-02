@@ -11,7 +11,7 @@ func main() {
 	// })
 	// http.ListenAndServe("localhost:8080", nil)
 
-	err := objs.YamlToJson("../cmd/tt.yml", "../cmd/tt.json")
+	err := objs.YamlToJson("../cmd/tt1.yml", "../cmd/tt.json")
 	if err != nil {
 		log.Println(err)
 	}
