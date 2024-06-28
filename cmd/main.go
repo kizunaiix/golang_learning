@@ -1,6 +1,7 @@
 package main
 
 import (
+	// import的写法是  ModuleName/DirName/DirName  导入的是package  用的时候写PackageName.Func()
 	"golang_learning/pkg/objs"
 	"log"
 )
