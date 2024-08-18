@@ -17,3 +17,10 @@ func TestLeecode27(t *testing.T) {
 	a := leecode.RemoveElement(myslice, 3)
 	fmt.Printf("output: %v,%v", a, myslice)
 }
+
+func TestTt(t *testing.T) {
+	slice1 := []rune{'a', 'b'}
+	slice2 := "cdf"
+	fmt.Println(append(slice1, []rune(slice2)...))
+	fmt.Println(string(slice1), slice2)
+}
