@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -326,4 +327,12 @@ func Test22(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+// 匿名函数可以有参数，也可以有返回值
+func Test23(t *testing.T) {
+	mystr := func(a int64) string {
+		return fmt.Sprintf("ss" + strconv.Itoa(int(a)))
+	}(333)
+	log.Println(mystr)
 }
