@@ -11,13 +11,18 @@ func MyAsyncFunc(wg *sync.WaitGroup) {
 	time.Sleep(3 * time.Second)
 	fmt.Println("wake!")
 }
-
+func ttt() *string {
+	var ss string = "kop"
+	return &ss
+}
 func main() {
-	var wg = &sync.WaitGroup{}
-	fmt.Println("start")
-	wg.Add(1)
+	// var wg = &sync.WaitGroup{}
+	// fmt.Println("start")
+	// wg.Add(1)
 
-	go MyAsyncFunc(wg)
-	wg.Wait()
-	fmt.Println("end")
+	// go MyAsyncFunc(wg)
+	// wg.Wait()
+	// fmt.Println("end")
+	a := ttt()
+	fmt.Println(*a)
 }
